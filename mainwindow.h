@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QPainter>
 #include <QFileDialog>
+#include <QMessageBox>
 #include "comminterface.h"
 #include "mthread.h"
 #define MX 40
@@ -29,12 +30,12 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     CommInterface *comm;
-    Servo Pin, Pout;
-    Servo Srv[MAXPOINTS];
-    Servo Program[MAXSTEP];
-    ServoR Pos, dx;
-    int ProgramCounter;
-    int StepCount;
+    Servo pin, pout;
+    Servo srv[MAXPOINTS];
+    Servo program[MAXSTEP];
+    ServoR pos, dx;
+    int programCounter;
+    int stepCount;
     int gcnt;
     int scnt;
     int pcnt;

@@ -7,28 +7,37 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     comm =  new CommInterface();
+    if(!comm->enabled)
+    {
+        QMessageBox mbox;
+        std::string msg = "Podczas próby otwarcia portu wystąpił błąd:\n";
+        msg.append(comm->error.c_str());
+        mbox.setText(msg.c_str());
+        mbox.setDefaultButton(QMessageBox::Ok);
+        mbox.exec();
+    }
 
     gflag=0;
     Runf=0;
-    StepCount=100;
-    ProgramCounter=0;
+    stepCount=100;
+    programCounter=0;
     scnt=0;
     pcnt=0;
     gcnt=0;
-    Pos.S1=128;
-    Pos.S2=128;
-    Pos.S3=128;
-    Pos.S4=128;
-    Pos.S5=128;
-    Pos.S6=128;
-    Pout.S1=128;
-    Pout.S2=128;
-    Pout.S3=128;
-    Pout.S4=128;
-    Pout.S5=128;
-    Pout.S6=128;
-    Program[0]=Pout;
-    Srv[0]=Pout;
+    pos.S1=128;
+    pos.S2=128;
+    pos.S3=128;
+    pos.S4=128;
+    pos.S5=128;
+    pos.S6=128;
+    pout.S1=128;
+    pout.S2=128;
+    pout.S3=128;
+    pout.S4=128;
+    pout.S5=128;
+    pout.S6=128;
+    program[0]=pout;
+    srv[0]=pout;
 
     th=new MThread();
     connect(th, SIGNAL(tick()), this, SLOT(ex_th_tick()));
@@ -86,27 +95,27 @@ void MainWindow::paintEvent(QPaintEvent *)
     pen.setColor(QColor( 255,0,0,255 ));
     painter.setPen(pen);
     for ( int i=1; i<gcnt; i++ )
-    painter.drawLine(QLineF(sx+(i-1)*lx, ey-Srv[i-1].S1*ly, sx+i*lx, ey-Srv[i].S1*ly));
+    painter.drawLine(QLineF(sx+(i-1)*lx, ey-srv[i-1].S1*ly, sx+i*lx, ey-srv[i].S1*ly));
     pen.setColor(QColor( 255,255,0,255 ));
     painter.setPen(pen);
     for ( int i=1; i<gcnt; i++ )
-    painter.drawLine(QLineF(sx+(i-1)*lx, ey-Srv[i-1].S2*ly, sx+i*lx, ey-Srv[i].S2*ly));
+    painter.drawLine(QLineF(sx+(i-1)*lx, ey-srv[i-1].S2*ly, sx+i*lx, ey-srv[i].S2*ly));
     pen.setColor(QColor( 0,255,0,255 ));
     painter.setPen(pen);
     for ( int i=1; i<gcnt; i++ )
-    painter.drawLine(QLineF(sx+(i-1)*lx, ey-Srv[i-1].S3*ly, sx+i*lx, ey-Srv[i].S3*ly));
+    painter.drawLine(QLineF(sx+(i-1)*lx, ey-srv[i-1].S3*ly, sx+i*lx, ey-srv[i].S3*ly));
     pen.setColor(QColor( 0,255,255,255 ));
     painter.setPen(pen);
     for ( int i=1; i<gcnt; i++ )
-    painter.drawLine(QLineF(sx+(i-1)*lx, ey-Srv[i-1].S4*ly, sx+i*lx, ey-Srv[i].S4*ly));
+    painter.drawLine(QLineF(sx+(i-1)*lx, ey-srv[i-1].S4*ly, sx+i*lx, ey-srv[i].S4*ly));
     pen.setColor(QColor( 255,128,0,255 ));
     painter.setPen(pen);
     for ( int i=1; i<gcnt; i++ )
-    painter.drawLine(QLineF(sx+(i-1)*lx, ey-Srv[i-1].S5*ly, sx+i*lx, ey-Srv[i].S5*ly));
+    painter.drawLine(QLineF(sx+(i-1)*lx, ey-srv[i-1].S5*ly, sx+i*lx, ey-srv[i].S5*ly));
     pen.setColor(QColor( 0,0,255,255 ));
     painter.setPen(pen);
     for ( int i=1; i<gcnt; i++ )
-    painter.drawLine(QLineF(sx+(i-1)*lx, ey-Srv[i-1].S6*ly, sx+i*lx, ey-Srv[i].S6*ly));
+    painter.drawLine(QLineF(sx+(i-1)*lx, ey-srv[i-1].S6*ly, sx+i*lx, ey-srv[i].S6*ly));
     }
 }
 
@@ -124,57 +133,57 @@ void MainWindow::ex_th_tick()
         ui->label_7->setText(QString("Step: %1").arg(pcnt+1));
         if(scnt==0)
         {
-        Pos.S1=(double)Pout.S1;
-        dx.S1= (Program[pcnt].S1-Pout.S1)/(double)StepCount;
-        Pos.S2=(double)Pout.S2;
-        dx.S2= (Program[pcnt].S2-Pout.S2)/(double)StepCount;
-        Pos.S3=(double)Pout.S3;
-        dx.S3= (Program[pcnt].S3-Pout.S3)/(double)StepCount;
-        Pos.S4=(double)Pout.S4;
-        dx.S4= (Program[pcnt].S4-Pout.S4)/(double)StepCount;
-        Pos.S5=(double)Pout.S5;
-        dx.S5= (Program[pcnt].S5-Pout.S5)/(double)StepCount;
-        Pos.S6=(double)Pout.S6;
-        dx.S6= (Program[pcnt].S6-Pout.S6)/(double)StepCount;
+        pos.S1=(double)pout.S1;
+        dx.S1= (program[pcnt].S1-pout.S1)/(double)stepCount;
+        pos.S2=(double)pout.S2;
+        dx.S2= (program[pcnt].S2-pout.S2)/(double)stepCount;
+        pos.S3=(double)pout.S3;
+        dx.S3= (program[pcnt].S3-pout.S3)/(double)stepCount;
+        pos.S4=(double)pout.S4;
+        dx.S4= (program[pcnt].S4-pout.S4)/(double)stepCount;
+        pos.S5=(double)pout.S5;
+        dx.S5= (program[pcnt].S5-pout.S5)/(double)stepCount;
+        pos.S6=(double)pout.S6;
+        dx.S6= (program[pcnt].S6-pout.S6)/(double)stepCount;
     }
 
-    Pos.S1+=dx.S1;
-    Pout.S1=(BYTE)Pos.S1;
-    Pos.S2+=dx.S2;
-    Pout.S2=(BYTE)Pos.S2;
-    Pos.S3+=dx.S3;
-    Pout.S3=(BYTE)Pos.S3;
-    Pos.S4+=dx.S4;
-    Pout.S4=(BYTE)Pos.S4;
-    Pos.S5+=dx.S5;
-    Pout.S5=(BYTE)Pos.S5;
-    Pos.S6+=dx.S6;
-    Pout.S6=(BYTE)Pos.S6;
+    pos.S1+=dx.S1;
+    pout.S1=(BYTE)pos.S1;
+    pos.S2+=dx.S2;
+    pout.S2=(BYTE)pos.S2;
+    pos.S3+=dx.S3;
+    pout.S3=(BYTE)pos.S3;
+    pos.S4+=dx.S4;
+    pout.S4=(BYTE)pos.S4;
+    pos.S5+=dx.S5;
+    pout.S5=(BYTE)pos.S5;
+    pos.S6+=dx.S6;
+    pout.S6=(BYTE)pos.S6;
 
-    comm->Send(Pout);
+    comm->send(pout);
 
-    ui->horizontalSlider_1->setValue(Pout.S1);
-    ui->horizontalSlider_2->setValue(Pout.S2);
-    ui->horizontalSlider_3->setValue(Pout.S3);
-    ui->horizontalSlider_4->setValue(Pout.S4);
-    ui->horizontalSlider_5->setValue(Pout.S5);
-    ui->horizontalSlider_6->setValue(Pout.S6);
+    ui->horizontalSlider_1->setValue(pout.S1);
+    ui->horizontalSlider_2->setValue(pout.S2);
+    ui->horizontalSlider_3->setValue(pout.S3);
+    ui->horizontalSlider_4->setValue(pout.S4);
+    ui->horizontalSlider_5->setValue(pout.S5);
+    ui->horizontalSlider_6->setValue(pout.S6);
     scnt++;
-    if(scnt>=StepCount)
+    if(scnt>=stepCount)
     {
         scnt=0;
-        if(pcnt<ProgramCounter)
+        if(pcnt<programCounter)
         pcnt++;
     }
-    if(pcnt>=ProgramCounter)
+    if(pcnt>=programCounter)
     {
         Runf=0;
         ui->actionRun_Program->setEnabled(true);
     }
-        Srv[gcnt]=Pout;
+        srv[gcnt]=pout;
         gcnt++;
         ui->centralWidget->repaint();
-        if(gcnt > StepCount*10)
+        if(gcnt > stepCount*10)
         gcnt=0;
     }
 }
@@ -182,50 +191,50 @@ void MainWindow::ex_th_tick()
 void MainWindow::on_horizontalSlider_1_valueChanged(int value)
 {
     ui->label->setText(QString().setNum(value));
-    Pout.S1=value;
+    pout.S1=value;
     if(Runf==0)
-    comm->Send(Pout);
+    comm->send(pout);
 }
 
 
 void MainWindow::on_horizontalSlider_2_valueChanged(int value)
 {
     ui->label_2->setText(QString().setNum(value));
-    Pout.S2=value;
+    pout.S2=value;
     if(Runf==0)
-    comm->Send(Pout);
+    comm->send(pout);
 }
 
 void MainWindow::on_horizontalSlider_3_valueChanged(int value)
 {
     ui->label_3->setText(QString().setNum(value));
-    Pout.S3=value;
+    pout.S3=value;
     if(Runf==0)
-    comm->Send(Pout);
+    comm->send(pout);
 }
 
 void MainWindow::on_horizontalSlider_4_valueChanged(int value)
 {
     ui->label_4->setText(QString().setNum(value));
-    Pout.S4=value;
+    pout.S4=value;
     if(Runf==0)
-    comm->Send(Pout);
+    comm->send(pout);
 }
 
 void MainWindow::on_horizontalSlider_5_valueChanged(int value)
 {
     ui->label_5->setText(QString().setNum(value));
-    Pout.S5=value;
+    pout.S5=value;
     if(Runf==0)
-    comm->Send(Pout);
+    comm->send(pout);
 }
 
 void MainWindow::on_horizontalSlider_6_valueChanged(int value)
 {
     ui->label_6->setText(QString().setNum(value));
-    Pout.S6=value;
+    pout.S6=value;
     if(Runf==0)
-    comm->Send(Pout);
+    comm->send(pout);
 }
 
 void MainWindow::on_actionNew_triggered()
@@ -233,9 +242,9 @@ void MainWindow::on_actionNew_triggered()
     ui->actionRun_Program->setEnabled(false);
     ui->textBrowser->clear();
     gcnt=0;
-    ProgramCounter=0;
+    programCounter=0;
     pcnt=0;
-    ui->label_7->setText(QString("Step: %1").arg(ProgramCounter+1));
+    ui->label_7->setText(QString("Step: %1").arg(programCounter+1));
     ui->horizontalSlider_1->setValue(128);
     ui->horizontalSlider_2->setValue(128);
     ui->horizontalSlider_3->setValue(128);
@@ -249,27 +258,27 @@ void MainWindow::on_actionNew_triggered()
     ui->actionEnd_Step->setEnabled(false);
     ui->actionRun_Program->setEnabled(false);
 
-    Pout.S1=128;
-    Pout.S2=128;
-    Pout.S3=128;
-    Pout.S4=128;
-    Pout.S5=128;
-    Pout.S6=128;
+    pout.S1=128;
+    pout.S2=128;
+    pout.S3=128;
+    pout.S4=128;
+    pout.S5=128;
+    pout.S6=128;
 
-    Program[0]=Pout;
-    Srv[0]=Pout;
+    program[0]=pout;
+    srv[0]=pout;
 }
 
 void MainWindow::on_actionAdd_Step_triggered()
 {
-    Program[ProgramCounter]=Pout;
-    ui->label_7->setText(QString("Step: %1").arg(ProgramCounter+1));
+    program[programCounter]=pout;
+    ui->label_7->setText(QString("Step: %1").arg(programCounter+1));
     ui->textBrowser->insertPlainText(QString().sprintf("%4d) %03d %03d %03d %03d %03d %03d\n",
-    ProgramCounter+1, Pout.S1, Pout.S2, Pout.S3, Pout.S4, Pout.S5, Pout.S6));
+    programCounter+1, pout.S1, pout.S2, pout.S3, pout.S4, pout.S5, pout.S6));
     ui->actionEnd_Step->setEnabled(true);
     ui->actionRun_Program->setEnabled(false);
-    if(ProgramCounter<MAXSTEP)
-        ProgramCounter++;
+    if(programCounter<MAXSTEP)
+        programCounter++;
 }
 
 void MainWindow::on_actionEnd_Step_triggered()
@@ -294,7 +303,7 @@ void MainWindow::on_actionSave_triggered()
     QFile file(FileName);
     if (!file. open ( QIODevice::WriteOnly | QIODevice :: Text ))
         return ;
-    file.write(( char *) Program , sizeof ( Servo )* ProgramCounter );
+    file.write(( char *) program , sizeof ( Servo )* programCounter );
     file.close();
 }
 
@@ -305,28 +314,28 @@ void MainWindow::on_actionOpen_triggered()
     QFile file(fileName);
     if (!file. open ( QIODevice::ReadOnly | QIODevice :: Text ))
         return ;
-    int size = file.read((char *) Program, sizeof(Servo)*MAXSTEP);
+    int size = file.read((char *) program, sizeof(Servo)*MAXSTEP);
     file.close();
     if(size == -1) {
         return;
     }
 
-    ProgramCounter = size/sizeof(Servo);
+    programCounter = size/sizeof(Servo);
     ui->label_7->clear();
     ui->textBrowser->clear();
 
-    for(int i = 0; i < ProgramCounter; i++)
+    for(int i = 0; i < programCounter; i++)
     {
-        Pout = Program[i];
-        ui->label_7->setText(QString("Step: %1").arg(ProgramCounter+1));
+        pout = program[i];
+        ui->label_7->setText(QString("Step: %1").arg(programCounter+1));
         ui->textBrowser->insertPlainText(QString().sprintf("%4d) %03d %03d %03d %03d %03d %03d\n",
-        i+1, Pout.S1, Pout.S2, Pout.S3, Pout.S4, Pout.S5, Pout.S6));
-        ui->horizontalSlider_1->setValue(Pout.S1);
-        ui->horizontalSlider_2->setValue(Pout.S2);
-        ui->horizontalSlider_3->setValue(Pout.S3);
-        ui->horizontalSlider_4->setValue(Pout.S4);
-        ui->horizontalSlider_5->setValue(Pout.S5);
-        ui->horizontalSlider_6->setValue(Pout.S6);
+        i+1, pout.S1, pout.S2, pout.S3, pout.S4, pout.S5, pout.S6));
+        ui->horizontalSlider_1->setValue(pout.S1);
+        ui->horizontalSlider_2->setValue(pout.S2);
+        ui->horizontalSlider_3->setValue(pout.S3);
+        ui->horizontalSlider_4->setValue(pout.S4);
+        ui->horizontalSlider_5->setValue(pout.S5);
+        ui->horizontalSlider_6->setValue(pout.S6);
     }
     ui->actionAdd_Step->setEnabled(true);
     ui->actionRun_Program->setEnabled(true);

@@ -2,10 +2,8 @@
 #define COMMINTERFACE_H
 
 #include <QApplication>
-
-#ifdef Q_OS_WIN
-#include <windows.h>
-#endif
+#include <QSerialPort>
+#include <QSerialPortInfo>
 
 typedef unsigned char BYTE;
 
@@ -24,14 +22,11 @@ class CommInterface
 public:
     CommInterface();
     ~CommInterface();
-    bool Send(Servo);
-    bool Enabled;
+    QSerialPort serialPort;
+    bool send(Servo);
+    bool enabled;
+    std::string error;
 private:
-#ifdef Q_OS_WIN
-    HANDLE hCommDev;
-    DCB dcb;
-#endif
-
-    BYTE Buffer_O[18];
+    BYTE buffer_O[18];
 };
 #endif // COMMINTERFACE_H
