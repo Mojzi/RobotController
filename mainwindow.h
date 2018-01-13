@@ -3,10 +3,15 @@
 
 #include <QMainWindow>
 #include <QPainter>
+#include <QtCore>
+#include <QtGui>
+#include <QtMath>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QGraphicsScene>
 #include "comminterface.h"
 #include "mthread.h"
+#include "robotsimulation.h"
 #define MX 40
 #define MY 20
 
@@ -41,6 +46,7 @@ public:
     int pcnt;
     int gflag;
     int Runf;
+    bool showSimulation;
 
 private slots:
     void on_horizontalSlider_1_valueChanged(int value);
@@ -71,10 +77,25 @@ private slots:
     void on_actionOpen_triggered();
 
 
+    void on_checkBox_2_stateChanged(int arg1);
+
+    void on_calcIKBt_clicked();
+
+    void on_spinBox_x_valueChanged(double arg1);
+
+    void on_spinBox_y_valueChanged(double arg1);
+
+    void on_spinBox_z_valueChanged(double arg1);
+
+    void on_spinBox_p_valueChanged(double arg1);
+
 private:
     Ui::MainWindow *ui;
     void paintEvent(QPaintEvent *);
+    QGraphicsScene *scene;
+    QGraphicsScene *scene2;
     MThread *th;
+    RobotSimulation *robotSimulation;
 };
 
 #endif // MAINWINDOW_H

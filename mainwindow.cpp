@@ -44,6 +44,21 @@ MainWindow::MainWindow(QWidget *parent) :
     th->start(th->HighPriority);
 
     gflag=1;
+
+    scene = new QGraphicsScene(this);
+    scene->setSceneRect(-256, -256, 512, 512);
+
+    scene2 = new QGraphicsScene(this);
+    scene2->setSceneRect(-256, -256, 512, 512);
+    ui->graphicsView_1->setScene(scene);
+    ui->graphicsView_1->scale(1,-1); //flip to make going up be positive y;
+
+    ui->graphicsView_2->setScene(scene2);
+    ui->graphicsView_2->scale(1,-1); //flip to make going up be positive y;
+
+    robotSimulation = new RobotSimulation(scene, &pout);
+    on_calcIKBt_clicked();
+
 }
 
 void MainWindow::paintEvent(QPaintEvent *)
@@ -79,13 +94,15 @@ void MainWindow::paintEvent(QPaintEvent *)
     painter.drawLine(QLineF(sx, sy+y*dy, ex, sy+y*dy));
     // ------- opis ----------
     pen.setColor(QColor( 0,0,0,255 ));
+
     painter.setPen(pen);
     for(int x=0; x<=TX; x++)
     painter.drawText(QPoint(sx-4+x*dx, ey+font.pointSize()),
     QString("%1").arg(x));
-    for(int y=0; y<=TY; y++)
-    painter.drawText(QPoint(sx-20, sy+(font.pointSize()/2)+y*dy),
-    QString("%1").arg(256-(256*y/TY)));
+    for(int y=0; y<=TY; y++) {
+        painter.drawText(QPoint(sx-20, sy+(font.pointSize()/2)+y*dy),
+        QString("%1").arg(256-(256*y/TY)));
+    }
     double lx=(ex-sx)/1000.0;
     double ly=(ey-sy)/256.0;
     if(gflag)
@@ -145,6 +162,7 @@ void MainWindow::ex_th_tick()
         dx.S5= (program[pcnt].S5-pout.S5)/(double)stepCount;
         pos.S6=(double)pout.S6;
         dx.S6= (program[pcnt].S6-pout.S6)/(double)stepCount;
+        robotSimulation->setValuesFromServo(&pout);
     }
 
     pos.S1+=dx.S1;
@@ -194,6 +212,7 @@ void MainWindow::on_horizontalSlider_1_valueChanged(int value)
     pout.S1=value;
     if(Runf==0)
     comm->send(pout);
+    robotSimulation->setValuesFromServo(&pout);
 }
 
 
@@ -203,6 +222,7 @@ void MainWindow::on_horizontalSlider_2_valueChanged(int value)
     pout.S2=value;
     if(Runf==0)
     comm->send(pout);
+    robotSimulation->setValuesFromServo(&pout);
 }
 
 void MainWindow::on_horizontalSlider_3_valueChanged(int value)
@@ -211,6 +231,7 @@ void MainWindow::on_horizontalSlider_3_valueChanged(int value)
     pout.S3=value;
     if(Runf==0)
     comm->send(pout);
+    robotSimulation->setValuesFromServo(&pout);
 }
 
 void MainWindow::on_horizontalSlider_4_valueChanged(int value)
@@ -219,6 +240,7 @@ void MainWindow::on_horizontalSlider_4_valueChanged(int value)
     pout.S4=value;
     if(Runf==0)
     comm->send(pout);
+    robotSimulation->setValuesFromServo(&pout);
 }
 
 void MainWindow::on_horizontalSlider_5_valueChanged(int value)
@@ -227,6 +249,7 @@ void MainWindow::on_horizontalSlider_5_valueChanged(int value)
     pout.S5=value;
     if(Runf==0)
     comm->send(pout);
+    robotSimulation->setValuesFromServo(&pout);
 }
 
 void MainWindow::on_horizontalSlider_6_valueChanged(int value)
@@ -235,6 +258,7 @@ void MainWindow::on_horizontalSlider_6_valueChanged(int value)
     pout.S6=value;
     if(Runf==0)
     comm->send(pout);
+    robotSimulation->setValuesFromServo(&pout);
 }
 
 void MainWindow::on_actionNew_triggered()
@@ -342,3 +366,54 @@ void MainWindow::on_actionOpen_triggered()
     ui->actionEnd_Step->setEnabled(false);
 }
 
+
+
+void MainWindow::on_calcIKBt_clicked()
+{
+
+    scene->clear();
+    scene2->clear();
+
+    ui->graphicsView_1->items().clear();
+    float x = ui->spinBox_x->value();
+    float y = ui->spinBox_y->value();
+    float z = ui->spinBox_z->value();
+    float p = ui->spinBox_p->value();
+    robotSimulation->kinematics(x, y, z, p, &pout);
+    robotSimulation->draw(scene);
+    robotSimulation->draw_td(scene2, x, y, z);
+
+    QBrush blueBrush(Qt::blue);
+    QPen bluePen(Qt::blue);
+
+//    scene->addEllipse(x*10, z*10, 2,2, bluePen, blueBrush);
+    ui->horizontalSlider_1->setValue(pout.S1);
+    ui->horizontalSlider_2->setValue(pout.S2);
+    ui->horizontalSlider_3->setValue(pout.S3);
+    ui->horizontalSlider_4->setValue(pout.S4);
+    ui->horizontalSlider_5->setValue(pout.S5);
+    ui->horizontalSlider_6->setValue(pout.S6);
+
+}
+
+void MainWindow::on_spinBox_x_valueChanged(double arg1)
+{
+    on_calcIKBt_clicked();
+}
+
+void MainWindow::on_spinBox_y_valueChanged(double arg1)
+{
+
+    on_calcIKBt_clicked();
+}
+
+void MainWindow::on_spinBox_z_valueChanged(double arg1)
+{
+
+    on_calcIKBt_clicked();
+}
+
+void MainWindow::on_spinBox_p_valueChanged(double arg1)
+{
+    on_calcIKBt_clicked();
+}

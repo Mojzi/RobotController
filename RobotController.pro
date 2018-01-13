@@ -27,12 +27,14 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     comminterface.cpp \
-    mthread.cpp
+    mthread.cpp \
+    robotsimulation.cpp
 
 HEADERS += \
         mainwindow.h \
     comminterface.h \
-    mthread.h
+    mthread.h \
+    robotsimulation.h
 
 FORMS += \
         mainwindow.ui
