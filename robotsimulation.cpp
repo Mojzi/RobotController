@@ -75,7 +75,7 @@ void RobotSimulation::draw_td(QGraphicsScene *scene, float x, float y, float z)
         scene->addLine(i*gridOffset*DRAW_SCALE, -gridSize*gridOffset, i*gridOffset*DRAW_SCALE, gridSize*gridOffset, dotPen);
     }
 
-    scene->addLine(x*DRAW_SCALE,y*DRAW_SCALE,xp*DRAW_SCALE,yp*DRAW_SCALE,blackPen);
+    scene->addLine(xp*DRAW_SCALE,yp*DRAW_SCALE,x*DRAW_SCALE,y*DRAW_SCALE,blackPen);
 }
 void matrixMultiplty(double in1[4][4], double in2[4][4], double out[4][4])
 {
