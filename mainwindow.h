@@ -76,11 +76,6 @@ private slots:
 
     void on_actionOpen_triggered();
 
-
-    void on_checkBox_2_stateChanged(int arg1);
-
-    void on_calcIKBt_clicked();
-
     void on_spinBox_x_valueChanged(double arg1);
 
     void on_spinBox_y_valueChanged(double arg1);
@@ -89,6 +84,7 @@ private slots:
 
     void on_spinBox_p_valueChanged(double arg1);
 
+    void calculateAndDrawRobot();
 private:
     Ui::MainWindow *ui;
     void paintEvent(QPaintEvent *);

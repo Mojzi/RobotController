@@ -13,35 +13,32 @@
 #define SECOND_SEGMENT_LEN 4.75
 #define THIRD_SEGMENT_LEN 5.75
 
-struct Vec2 {
-    float x, y;
-    void set(float _x, float _y) {
+struct Vec3 {
+    float x, y, z;
+    void set(float _x, float _y, float _z) {
         x= _x;
         y = _y;
+        z = _z;
     }
 };
 
 struct Segment {
-    Vec2 end;
+    Vec3 end;
+    float angle;
 };
 
 class RobotSimulation
 {
 public:
     RobotSimulation(QGraphicsScene *scene, Servo *pout);
-    void kinematics(float x, float y, float z, float p, Servo *pout);
+    void calculatePosition(float x, float y, float z, float p, Servo *pout);
     void draw(QGraphicsScene *scene);
-    void draw_td(QGraphicsScene *scene, float x, float y, float z);
-    void getPositionAsServo(Servo *pout);
-    void setValuesFromServo(Servo *pout);
+    void draw_td(QGraphicsScene *scene);
 private:
     Segment segments[SEGMENTS];
-    Segment segments_td[SEGMENTS];
-    QGraphicsLineItem *arms[SEGMENTS];
-    QGraphicsRectItem *joints[SEGMENTS];
 
-    QGraphicsLineItem *arms_td[SEGMENTS];
-    QGraphicsRectItem *joints_td[SEGMENTS];
+
+
 };
 
 #endif // ROBOTSIMULATION_H

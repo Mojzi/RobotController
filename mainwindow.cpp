@@ -57,7 +57,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->graphicsView_2->scale(1,-1); //flip to make going up be positive y;
 
     robotSimulation = new RobotSimulation(scene, &pout);
-    on_calcIKBt_clicked();
+    calculateAndDrawRobot();
 
 }
 
@@ -87,12 +87,12 @@ void MainWindow::paintEvent(QPaintEvent *)
     QFont font;
     font.setPointSize(8);
     painter.setFont(font);
-    // ----- siatka ------------
+    // ----- grid ------------
     for(int x=0; x<=TX; x++)
     painter.drawLine(QLineF(sx+x*dx, sy, sx+x*dx, ey));
     for(int y=0; y<=TY; y++)
     painter.drawLine(QLineF(sx, sy+y*dy, ex, sy+y*dy));
-    // ------- opis ----------
+    // ------- description ----------
     pen.setColor(QColor( 0,0,0,255 ));
 
     painter.setPen(pen);
@@ -162,7 +162,6 @@ void MainWindow::ex_th_tick()
         dx.S5= (program[pcnt].S5-pout.S5)/(double)stepCount;
         pos.S6=(double)pout.S6;
         dx.S6= (program[pcnt].S6-pout.S6)/(double)stepCount;
-        robotSimulation->setValuesFromServo(&pout);
     }
 
     pos.S1+=dx.S1;
@@ -212,7 +211,6 @@ void MainWindow::on_horizontalSlider_1_valueChanged(int value)
     pout.S1=value;
     if(Runf==0)
     comm->send(pout);
-    robotSimulation->setValuesFromServo(&pout);
 }
 
 
@@ -222,7 +220,6 @@ void MainWindow::on_horizontalSlider_2_valueChanged(int value)
     pout.S2=value;
     if(Runf==0)
     comm->send(pout);
-    robotSimulation->setValuesFromServo(&pout);
 }
 
 void MainWindow::on_horizontalSlider_3_valueChanged(int value)
@@ -231,7 +228,6 @@ void MainWindow::on_horizontalSlider_3_valueChanged(int value)
     pout.S3=value;
     if(Runf==0)
     comm->send(pout);
-    robotSimulation->setValuesFromServo(&pout);
 }
 
 void MainWindow::on_horizontalSlider_4_valueChanged(int value)
@@ -240,7 +236,6 @@ void MainWindow::on_horizontalSlider_4_valueChanged(int value)
     pout.S4=value;
     if(Runf==0)
     comm->send(pout);
-    robotSimulation->setValuesFromServo(&pout);
 }
 
 void MainWindow::on_horizontalSlider_5_valueChanged(int value)
@@ -249,7 +244,6 @@ void MainWindow::on_horizontalSlider_5_valueChanged(int value)
     pout.S5=value;
     if(Runf==0)
     comm->send(pout);
-    robotSimulation->setValuesFromServo(&pout);
 }
 
 void MainWindow::on_horizontalSlider_6_valueChanged(int value)
@@ -258,7 +252,6 @@ void MainWindow::on_horizontalSlider_6_valueChanged(int value)
     pout.S6=value;
     if(Runf==0)
     comm->send(pout);
-    robotSimulation->setValuesFromServo(&pout);
 }
 
 void MainWindow::on_actionNew_triggered()
@@ -368,7 +361,7 @@ void MainWindow::on_actionOpen_triggered()
 
 
 
-void MainWindow::on_calcIKBt_clicked()
+void MainWindow::calculateAndDrawRobot()
 {
 
     scene->clear();
@@ -379,14 +372,13 @@ void MainWindow::on_calcIKBt_clicked()
     float y = ui->spinBox_y->value();
     float z = ui->spinBox_z->value();
     float p = ui->spinBox_p->value();
-    robotSimulation->kinematics(x, y, z, p, &pout);
+    robotSimulation->calculatePosition(x, y, z, p, &pout);
     robotSimulation->draw(scene);
-    robotSimulation->draw_td(scene2, x, y, z);
+    robotSimulation->draw_td(scene2);
 
     QBrush blueBrush(Qt::blue);
     QPen bluePen(Qt::blue);
 
-//    scene->addEllipse(x*10, z*10, 2,2, bluePen, blueBrush);
     ui->horizontalSlider_1->setValue(pout.S1);
     ui->horizontalSlider_2->setValue(pout.S2);
     ui->horizontalSlider_3->setValue(pout.S3);
@@ -398,22 +390,22 @@ void MainWindow::on_calcIKBt_clicked()
 
 void MainWindow::on_spinBox_x_valueChanged(double arg1)
 {
-    on_calcIKBt_clicked();
+    calculateAndDrawRobot();
 }
 
 void MainWindow::on_spinBox_y_valueChanged(double arg1)
 {
 
-    on_calcIKBt_clicked();
+    calculateAndDrawRobot();
 }
 
 void MainWindow::on_spinBox_z_valueChanged(double arg1)
 {
 
-    on_calcIKBt_clicked();
+    calculateAndDrawRobot();
 }
 
 void MainWindow::on_spinBox_p_valueChanged(double arg1)
 {
-    on_calcIKBt_clicked();
+    calculateAndDrawRobot();
 }
