@@ -18,7 +18,6 @@
 #define DRAW_SCALE 10
 RobotSimulation::RobotSimulation(QGraphicsScene *scene, Servo *pout)
 {
-    calculatePosition(0,0,0,0, pout);
 }
 
 void RobotSimulation::draw(QGraphicsScene *scene)
@@ -37,10 +36,10 @@ void RobotSimulation::draw(QGraphicsScene *scene)
         scene->addLine(i*gridOffset*DRAW_SCALE, -gridSize*gridOffset, i*gridOffset*DRAW_SCALE, gridSize*gridOffset, dotPen);
     }
     for(int i=0; i<SEGMENTS; i++) {
-        scene->addLine((i==0?0:segments[i-1].end.x)*DRAW_SCALE, (i==0?0:segments[i-1].end.y)*DRAW_SCALE, (segments[i].end.x)*DRAW_SCALE, (segments[i].end.y)*DRAW_SCALE);
+        scene->addLine((i==0?0:segments[i-1].end.x)*DRAW_SCALE, (i==0?0:segments[i-1].end.z)*DRAW_SCALE, (segments[i].end.x)*DRAW_SCALE, (segments[i].end.z)*DRAW_SCALE);
     }
     for(int i=0; i<SEGMENTS; i++) {
-        scene->addRect((segments[i].end.x)*DRAW_SCALE-1, (segments[i].end.y)*DRAW_SCALE-1, 3, 3, redPen, redBrush);
+        scene->addRect((segments[i].end.x)*DRAW_SCALE-1, (segments[i].end.z)*DRAW_SCALE-1, 3, 3, redPen, redBrush);
     }
 
 
@@ -63,10 +62,10 @@ void RobotSimulation::draw_td(QGraphicsScene *scene)
     }
 
     for(int i=0; i<SEGMENTS; i++) {
-        scene->addLine((i==0?0:segments[i-1].end.x)*DRAW_SCALE, -(i==0?0:segments[i-1].end.z)*DRAW_SCALE, (segments[i].end.x)*DRAW_SCALE, -(segments[i].end.z)*DRAW_SCALE);
+        scene->addLine((i==0?0:segments[i-1].end.x)*DRAW_SCALE, -(i==0?0:segments[i-1].end.y)*DRAW_SCALE, (segments[i].end.x)*DRAW_SCALE, -(segments[i].end.y)*DRAW_SCALE);
     }
     for(int i=0; i<SEGMENTS; i++) {
-        scene->addRect((segments[i].end.x)*DRAW_SCALE-1, -(segments[i].end.z)*DRAW_SCALE-1, 3, 3, redPen, redBrush);
+        scene->addRect((segments[i].end.x)*DRAW_SCALE-1, -(segments[i].end.y)*DRAW_SCALE-1, 3, 3, redPen, redBrush);
     }
 }
 
@@ -79,10 +78,18 @@ void matrixMultiplty(double in1[4][4], double in2[4][4], double out[4][4])
                 out[i][j] += in1[i][k]*in2[k][j];
 }
 
-void RobotSimulation::calculatePosition(float X, float Y, float Z, float P, Servo *pout)
+bool checkValidity(double in[4][4])
 {
-    double Xb, Zb, p1, p2, t1, t2, t3, Q,
-           V1[3] = {0}, V2[3] = {0}, V3[3] = {0},
+    for (int i=0; i<4; i++)
+        for (int j=0; j<4; j++)
+            if(qIsNaN(in[i][j]))
+                return false;
+    return true;
+}
+
+bool RobotSimulation::calculatePosition(float X, float Y, float Z, float P, Servo *pout)
+{
+    double Xb, Zb, p1, p2, t1, t2, t3, Q, angle[4],
            R0[4][4] = {0}, R1[4][4] = {0}, R2[4][4] = {0}, R3[4][4] = {0},
            T0[4][4] = {0}, T1[4][4] = {0}, T2[4][4] = {0}, T3[4][4] = {0},
            A0[4][4] = {0}, A1[4][4] = {0}, A2[4][4] = {0}, A3[4][4] = {0},
@@ -100,37 +107,38 @@ void RobotSimulation::calculatePosition(float X, float Y, float Z, float P, Serv
     t2 = p2-t1; // back to degrees
     t3 = P-p2;  // back to degrees
 
-    segments[0].angle = qAtan2(Y,X) * 180 / M_PI;
-    segments[0].angle = segments[0].angle*M_PI/180; //back to radians
-    segments[1].angle = ((t1 + 90) * 2 * M_PI) / 360;  // back to radians
-    segments[2].angle = ((t2 - 90) * 2 * M_PI) / 360;  // back to radians
-    segments[3].angle = (t3 * 2 * M_PI) / 360;  // back to radians
+    angle[0] =  qAtan2(Y,X) * 180 / M_PI;
+    angle[0] = angle[0] * M_PI / 180; //back to radians
+    angle[1] = ((t1 + 90) * 2 * M_PI) / 360;  // back to radians
+    angle[2] = ((t2 - 90) * 2 * M_PI) / 360;  // back to radians
+    angle[3] = (t3 * 2 * M_PI) / 360;  // back to radians
+
 
     // FORWARD KINEMATICS
-    R0[0][0] = qCos(segments[0].angle);
-    R0[0][2] = -qSin(segments[0].angle);
+    R0[0][0] = qCos(angle[0]);
+    R0[0][2] = -qSin(angle[0]);
     R0[1][1] = 1;
-    R0[2][0] = -qSin(segments[0].angle);
-    R0[2][2] = qCos(segments[0].angle);
+    R0[2][0] = -qSin(angle[0]);
+    R0[2][2] = qCos(angle[0]);
     R0[3][3] = 1;
-    R1[0][0] = qCos(segments[1].angle);
-    R1[0][1] = -qSin(segments[1].angle);
-    R1[1][0] = qSin(segments[1].angle);
-    R1[1][1] = qCos(segments[1].angle);
+    R1[0][0] = qCos(angle[1]);
+    R1[0][1] = -qSin(angle[1]);
+    R1[1][0] = qSin(angle[1]);
+    R1[1][1] = qCos(angle[1]);
     R1[2][2] = 1;
     R1[3][3] = 1;
 
-    R2[0][0] = qCos(segments[2].angle);
-    R2[0][1] = -qSin(segments[2].angle);
-    R2[1][0] = qSin(segments[2].angle);
-    R2[1][1] = qCos(segments[2].angle);
+    R2[0][0] = qCos(angle[2]);
+    R2[0][1] = -qSin(angle[2]);
+    R2[1][0] = qSin(angle[2]);
+    R2[1][1] = qCos(angle[2]);
     R2[2][2] = 1;
     R2[3][3] = 1;
 
-    R3[0][0] = qCos(segments[3].angle);
-    R3[0][1] = -qSin(segments[3].angle);
-    R3[1][0] = qSin(segments[3].angle);
-    R3[1][1] = qCos(segments[3].angle);
+    R3[0][0] = qCos(angle[3]);
+    R3[0][1] = -qSin(angle[3]);
+    R3[1][0] = qSin(angle[3]);
+    R3[1][1] = qCos(angle[3]);
     R3[2][2] = 1;
     R3[3][3] = 1;
 
@@ -172,21 +180,34 @@ void RobotSimulation::calculatePosition(float X, float Y, float Z, float P, Serv
     matrixMultiplty(P1,A2, P2);
     matrixMultiplty(P2,A3, P3);
 
-    V1[0] = P1[0][3];
-    V1[1] = P1[1][3];
-    V2[0] = P2[0][3];
-    V2[1] = P2[1][3];
-    V3[0] = P3[0][3];
-    V3[1] = P3[1][3];
+    for(int i=0; i<4; i++)
+    {
+        if(qIsNaN(angle[i]))
+            return false;
+    }
 
-    segments[0].end.set(P1[0][3], P1[1][3], P1[2][3]);
-    segments[1].end.set(P2[0][3], P2[1][3], P2[2][3]);
-    segments[2].end.set(P3[0][3], P3[1][3], P3[2][3]);
+    if(!checkValidity(P1))
+        return false;
+    if(!checkValidity(P2))
+        return false;
+    if(!checkValidity(P3))
+        return false;
+
+    for(int i=0; i<4; i++)
+    {
+        segments[i].angle =angle[i];
+    }
+
+    segments[0].end.set(P1[0][3], P1[2][3], P1[1][3]);
+    segments[1].end.set(P2[0][3], P2[2][3], P2[1][3]);
+    segments[2].end.set(P3[0][3], P3[2][3], P3[1][3]);
 
     pout->S6 = 128 - (segments[0].angle*180/M_PI)*(255/SV0);// first
-    pout->S5 = 128 - (segments[0].angle*180/M_PI)*(255/SV1); // second
-    pout->S4 = 128 - (segments[0].angle*180/M_PI)*(255/SV2); // third
-    pout->S3 = 128 + (segments[0].angle*180/M_PI)*(255/SV3); // fourth
+    pout->S5 = 128 - (segments[3].angle*180/M_PI)*(255/SV1); // second
+    pout->S4 = 128 - (segments[2].angle*180/M_PI)*(255/SV2); // third
+    pout->S3 = 128 + (segments[1].angle*180/M_PI)*(255/SV3); // fourth
     pout->S2 = 128;
     pout->S1 = 128;
+
+    return true;
 }

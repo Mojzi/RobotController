@@ -449,7 +449,10 @@
       </rect>
      </property>
      <property name="minimum">
-      <double>-99.000000000000000</double>
+      <double>-160.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>160.990000000000009</double>
      </property>
      <property name="value">
       <double>9.000000000000000</double>
@@ -465,7 +468,10 @@
       </rect>
      </property>
      <property name="minimum">
-      <double>-99.000000000000000</double>
+      <double>-80.000000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>80.000000000000000</double>
      </property>
     </widget>
     <widget class="QDoubleSpinBox" name="spinBox_z">
@@ -547,6 +553,19 @@
      </property>
      <property name="text">
       <string>P:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_error">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>170</y>
+       <width>131</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Position is out of reach!</string>
      </property>
     </widget>
    </widget>

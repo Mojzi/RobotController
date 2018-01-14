@@ -55,6 +55,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->graphicsView_2->setScene(scene2);
     ui->graphicsView_2->scale(1,-1); //flip to make going up be positive y;
+    ui->label_error->setVisible(false);
+    ui->label_error->setText("<font color='Red'>Position is out of reach!</font>");
 
     robotSimulation = new RobotSimulation(scene, &pout);
     calculateAndDrawRobot();
@@ -372,12 +374,18 @@ void MainWindow::calculateAndDrawRobot()
     float y = ui->spinBox_y->value();
     float z = ui->spinBox_z->value();
     float p = ui->spinBox_p->value();
-    robotSimulation->calculatePosition(x, y, z, p, &pout);
-    robotSimulation->draw(scene);
-    robotSimulation->draw_td(scene2);
-
-    QBrush blueBrush(Qt::blue);
-    QPen bluePen(Qt::blue);
+    if(robotSimulation->calculatePosition(x, y, z, p, &pout))
+    {
+        ui->label_error->setVisible(false);
+        robotSimulation->draw(scene);
+        robotSimulation->draw_td(scene2);
+    }
+    else
+    {
+        ui->label_error->setVisible(true);
+        robotSimulation->draw(scene);
+        robotSimulation->draw_td(scene2);
+    }
 
     ui->horizontalSlider_1->setValue(pout.S1);
     ui->horizontalSlider_2->setValue(pout.S2);
