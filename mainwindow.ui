@@ -449,13 +449,13 @@
       </rect>
      </property>
      <property name="minimum">
-      <double>-160.000000000000000</double>
+      <double>0.000000000000000</double>
      </property>
      <property name="maximum">
       <double>160.990000000000009</double>
      </property>
      <property name="value">
-      <double>9.000000000000000</double>
+      <double>14.000000000000000</double>
      </property>
     </widget>
     <widget class="QDoubleSpinBox" name="spinBox_y">
@@ -484,7 +484,7 @@
       </rect>
      </property>
      <property name="value">
-      <double>8.000000000000000</double>
+      <double>19.000000000000000</double>
      </property>
     </widget>
     <widget class="QLabel" name="label_9">

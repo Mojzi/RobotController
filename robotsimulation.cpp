@@ -29,13 +29,18 @@ void RobotSimulation::draw(QGraphicsScene *scene)
 
     QBrush redBrush(Qt::red);
     QPen dotPen(Qt::black);
+    QBrush blackBrush(Qt::black);
     QPen blackPen(Qt::black);
     QPen redPen(Qt::red);
     blackPen.setWidth(2);
     dotPen.setStyle(Qt::DashLine);
+
+    scene->addRect(-10.5*DRAW_SCALE, 0, 21*DRAW_SCALE, 5.8*DRAW_SCALE, blackPen, blackBrush);
+    scene->addLine(0,0, 0, H*DRAW_SCALE);
+
     int gridSize = 100;
     int gridOffset = 5;
-    for(int i = -gridOffset; i < gridOffset; i++) {
+    for(int i = -gridSize; i < gridSize; i++) {
         scene->addLine(-gridSize*DRAW_SCALE, i*DRAW_SCALE*gridOffset, gridSize*DRAW_SCALE, i*DRAW_SCALE*gridOffset, dotPen);
         scene->addLine(i*gridOffset*DRAW_SCALE, -gridSize*gridOffset, i*gridOffset*DRAW_SCALE, gridSize*gridOffset, dotPen);
     }
@@ -60,7 +65,7 @@ void RobotSimulation::draw_td(QGraphicsScene *scene)
 
     int gridSize = 100;
     int gridOffset = 5;
-    for(int i = -gridOffset; i < gridOffset; i++) {
+    for(int i = -gridSize; i < gridSize; i++) {
         scene->addLine(-gridSize*DRAW_SCALE, i*DRAW_SCALE*gridOffset, gridSize*DRAW_SCALE, i*DRAW_SCALE*gridOffset, dotPen);
         scene->addLine(i*gridOffset*DRAW_SCALE, -gridSize*gridOffset, i*gridOffset*DRAW_SCALE, gridSize*gridOffset, dotPen);
     }
@@ -125,6 +130,7 @@ bool RobotSimulation::calculatePosition(float X, float Y, float Z, float P, Serv
     R0[2][0] = -qSin(angle[0]);
     R0[2][2] = qCos(angle[0]);
     R0[3][3] = 1;
+
     R1[0][0] = qCos(angle[1]);
     R1[0][1] = -qSin(angle[1]);
     R1[1][0] = qSin(angle[1]);
@@ -192,7 +198,7 @@ bool RobotSimulation::calculatePosition(float X, float Y, float Z, float P, Serv
 
     for(int i=0; i<4; i++)
     {
-        if(qIsNaN(angle[i]))
+        if(qIsNaN(angle[i]) )
             return false;
     }
 
@@ -218,23 +224,10 @@ bool RobotSimulation::calculatePosition(float X, float Y, float Z, float P, Serv
     angles[2] = segments[2].angle*180/M_PI;
     angles[3] = segments[3].angle*180/M_PI;
 
-    char servos[3];
-    for (int i = 0; i < sizeof(servos)/sizeof(*servos); i++) {
-        int tmp = 128 - (segments[i+1].angle*180/M_PI)*(255/SV0);
-        if(tmp > 255)
-            servos[i] = 255;
-        else if (tmp < 0)
-                servos[i] = 0;
-        else
-            servos[i] = tmp;
-    }
-
     pout->S6 = 128 - (segments[0].angle*180/M_PI)*(255/SV0);// first
     pout->S5 = 128 - (segments[1].angle*180/M_PI - 90)*(255/SV1); // second
     pout->S4 = 128 - (segments[2].angle*180/M_PI)*(255/SV2); // third
     pout->S3 = 128 - (segments[3].angle*180/M_PI)*(255/SV3); // fourth
-    pout->S2 = 128;
-    pout->S1 = 128;
 
     return true;
 }

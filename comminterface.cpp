@@ -2,7 +2,18 @@
 
 CommInterface::CommInterface()
 {
-    serialPort.setPortName("/dev/ttfS0");
+
+    foreach (const QSerialPortInfo info, QSerialPortInfo::availablePorts())
+    {
+      if(info.manufacturer() == "FTDI" && info.description() == "USB Serial Port") serialPort.setPortName(info.portName());
+
+    }
+    serialPort.setBaudRate(QSerialPort::Baud9600);
+    serialPort.setDataBits(QSerialPort::Data8);
+    serialPort.setParity(QSerialPort::NoParity);
+    serialPort.setStopBits(QSerialPort::OneStop);
+    serialPort.setFlowControl(QSerialPort::NoFlowControl);
+
     if(serialPort.open(QIODevice::ReadWrite))
     {
         enabled = true;

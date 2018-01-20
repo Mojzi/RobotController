@@ -51,10 +51,10 @@ MainWindow::MainWindow(QWidget *parent) :
     scene2 = new QGraphicsScene(this);
     scene2->setSceneRect(-512, -512, 1024, 1024);
     ui->graphicsView_1->setScene(scene);
-    ui->graphicsView_1->scale(1,-1); //flip to make going up be positive y;
+    ui->graphicsView_1->scale(.5,-.5); //flip to make going up be positive y;
 
     ui->graphicsView_2->setScene(scene2);
-    ui->graphicsView_2->scale(1,-1); //flip to make going up be positive y;
+    ui->graphicsView_2->scale(.5,-.5); //flip to make going up be positive y;
     ui->label_error->setVisible(false);
     ui->label_error->setText("<font color='Red'>Position is out of reach!</font>");
 
