@@ -46,10 +46,10 @@ MainWindow::MainWindow(QWidget *parent) :
     gflag=1;
 
     scene = new QGraphicsScene(this);
-    scene->setSceneRect(-256, -256, 512, 512);
+    scene->setSceneRect(-512, -512, 1024, 1024);
 
     scene2 = new QGraphicsScene(this);
-    scene2->setSceneRect(-256, -256, 512, 512);
+    scene2->setSceneRect(-512, -512, 1024, 1024);
     ui->graphicsView_1->setScene(scene);
     ui->graphicsView_1->scale(1,-1); //flip to make going up be positive y;
 

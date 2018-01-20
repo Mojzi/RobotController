@@ -1,10 +1,14 @@
 #include "robotsimulation.h"
 
-#define H 3     // Height
+#define H 6.5     // Height
 
-#define L1 4.75    // Distance between S1 -> S2
-#define L2 4.75    // Distance between S2 -> S3
-#define L3 5.75    // Distance between S3 -> end
+//#define L1 4.75    // Distance between S1 -> S2
+//#define L2 4.75    // Distance between S2 -> S3
+//#define L3 5.75    // Distance between S3 -> end
+
+#define L3 17.2
+#define L2 8.1
+#define L1 8.0
 
 #define TESTA 160
 /* =========== ZAKRESY SERW ROBOTA W STOPNIACH ================== */
@@ -29,7 +33,7 @@ void RobotSimulation::draw(QGraphicsScene *scene)
     QPen redPen(Qt::red);
     blackPen.setWidth(2);
     dotPen.setStyle(Qt::DashLine);
-    int gridSize = 50;
+    int gridSize = 100;
     int gridOffset = 5;
     for(int i = -gridOffset; i < gridOffset; i++) {
         scene->addLine(-gridSize*DRAW_SCALE, i*DRAW_SCALE*gridOffset, gridSize*DRAW_SCALE, i*DRAW_SCALE*gridOffset, dotPen);
@@ -54,7 +58,7 @@ void RobotSimulation::draw_td(QGraphicsScene *scene)
     blackPen.setWidth(2);
     dotPen.setStyle(Qt::DashLine);
 
-    int gridSize = 50;
+    int gridSize = 100;
     int gridOffset = 5;
     for(int i = -gridOffset; i < gridOffset; i++) {
         scene->addLine(-gridSize*DRAW_SCALE, i*DRAW_SCALE*gridOffset, gridSize*DRAW_SCALE, i*DRAW_SCALE*gridOffset, dotPen);
