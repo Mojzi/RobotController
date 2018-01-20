@@ -50,7 +50,7 @@ bool CommInterface::send(Servo data)
     buffer_O[15]=255;
     buffer_O[16]=5;
     buffer_O[17]=data.S6;
-    QByteArray buffer = QByteArray((char*)buffer_O);
+    QByteArray buffer = QByteArray((char*)buffer_O, 18);
     return true;
     if(serialPort.write(buffer))
     {
