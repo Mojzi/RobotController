@@ -29,13 +29,14 @@ void RobotSimulation::draw(QGraphicsScene *scene)
 
     QBrush redBrush(Qt::red);
     QPen dotPen(Qt::black);
-    QBrush blackBrush(Qt::black);
+    QBrush lightGrayBrush(Qt::lightGray);
+    QPen lightGrayPen(Qt::lightGray);
     QPen blackPen(Qt::black);
     QPen redPen(Qt::red);
     blackPen.setWidth(2);
     dotPen.setStyle(Qt::DashLine);
 
-    scene->addRect(-10.5*DRAW_SCALE, 0, 21*DRAW_SCALE, 5.8*DRAW_SCALE, blackPen, blackBrush);
+    scene->addRect(-10.5*DRAW_SCALE, 0, 21*DRAW_SCALE, 5.8*DRAW_SCALE, lightGrayPen, lightGrayBrush);
     scene->addLine(0,0, 0, H*DRAW_SCALE);
 
     int gridSize = 100;
