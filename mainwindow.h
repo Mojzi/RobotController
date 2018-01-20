@@ -9,6 +9,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QGraphicsScene>
+#include <QString>
 #include "comminterface.h"
 #include "mthread.h"
 #include "robotsimulation.h"

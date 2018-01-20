@@ -568,6 +568,58 @@
       <string>Position is out of reach!</string>
      </property>
     </widget>
+    <widget class="QLabel" name="label_angle_0">
+     <property name="geometry">
+      <rect>
+       <x>140</x>
+       <y>50</y>
+       <width>52</width>
+       <height>14</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>TextLabel</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_angle_1">
+     <property name="geometry">
+      <rect>
+       <x>140</x>
+       <y>90</y>
+       <width>52</width>
+       <height>14</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>TextLabel</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_angle_2">
+     <property name="geometry">
+      <rect>
+       <x>140</x>
+       <y>120</y>
+       <width>52</width>
+       <height>14</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>TextLabel</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_angle_3">
+     <property name="geometry">
+      <rect>
+       <x>140</x>
+       <y>140</y>
+       <width>52</width>
+       <height>14</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>TextLabel</string>
+     </property>
+    </widget>
    </widget>
   </widget>
   <action name="actionNew">

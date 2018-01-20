@@ -374,11 +374,17 @@ void MainWindow::calculateAndDrawRobot()
     float y = ui->spinBox_y->value();
     float z = ui->spinBox_z->value();
     float p = ui->spinBox_p->value();
-    if(robotSimulation->calculatePosition(x, y, z, p, &pout))
+    float angles[4];
+    if(robotSimulation->calculatePosition(x, y, z, p, &pout, angles))
     {
         ui->label_error->setVisible(false);
         robotSimulation->draw(scene);
         robotSimulation->draw_td(scene2);
+
+        ui->label_angle_0->setText(QString::number(angles[0]));
+        ui->label_angle_1->setText(QString::number(angles[1]));
+        ui->label_angle_2->setText(QString::number(angles[2]));
+        ui->label_angle_3->setText(QString::number(angles[3]));
     }
     else
     {

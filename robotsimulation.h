@@ -31,7 +31,7 @@ class RobotSimulation
 {
 public:
     RobotSimulation(QGraphicsScene *scene, Servo *pout);
-    bool calculatePosition(float x, float y, float z, float p, Servo *pout);
+    bool calculatePosition(float x, float y, float z, float p, Servo *pout, float angles[4]);
     void draw(QGraphicsScene *scene);
     void draw_td(QGraphicsScene *scene);
 private:

@@ -36,7 +36,7 @@ void RobotSimulation::draw(QGraphicsScene *scene)
         scene->addLine(i*gridOffset*DRAW_SCALE, -gridSize*gridOffset, i*gridOffset*DRAW_SCALE, gridSize*gridOffset, dotPen);
     }
     for(int i=0; i<SEGMENTS; i++) {
-        scene->addLine((i==0?0:segments[i-1].end.x)*DRAW_SCALE, (i==0?0:segments[i-1].end.z)*DRAW_SCALE, (segments[i].end.x)*DRAW_SCALE, (segments[i].end.z)*DRAW_SCALE);
+        scene->addLine((i==0?0:segments[i-1].end.x)*DRAW_SCALE, (i==0?H:segments[i-1].end.z)*DRAW_SCALE, (segments[i].end.x)*DRAW_SCALE, (segments[i].end.z)*DRAW_SCALE);
     }
     for(int i=0; i<SEGMENTS; i++) {
         scene->addRect((segments[i].end.x)*DRAW_SCALE-1, (segments[i].end.z)*DRAW_SCALE-1, 3, 3, redPen, redBrush);
@@ -87,7 +87,7 @@ bool checkValidity(double in[4][4])
     return true;
 }
 
-bool RobotSimulation::calculatePosition(float X, float Y, float Z, float P, Servo *pout)
+bool RobotSimulation::calculatePosition(float X, float Y, float Z, float P, Servo *pout, float angles[4])
 {
     double Xb, Zb, p1, p2, t1, t2, t3, Q, angle[4],
            R0[4][4] = {0}, R1[4][4] = {0}, R2[4][4] = {0}, R3[4][4] = {0},
@@ -107,8 +107,8 @@ bool RobotSimulation::calculatePosition(float X, float Y, float Z, float P, Serv
     t2 = p2-t1; // back to degrees
     t3 = P-p2;  // back to degrees
 
-    angle[0] =  qAtan2(Y,X) * 180 / M_PI;
-    angle[0] = angle[0] * M_PI / 180; //back to radians
+    angle[0] =  qAtan2(Y,X);
+//    angle[0] = angle[0] * M_PI / 180; //back to radians
     angle[1] = ((t1 + 90) * 2 * M_PI) / 360;  // back to radians
     angle[2] = ((t2 - 90) * 2 * M_PI) / 360;  // back to radians
     angle[3] = (t3 * 2 * M_PI) / 360;  // back to radians
@@ -180,6 +180,12 @@ bool RobotSimulation::calculatePosition(float X, float Y, float Z, float P, Serv
     matrixMultiplty(P1,A2, P2);
     matrixMultiplty(P2,A3, P3);
 
+    qDebug("");
+    qDebug("%f", segments[0].angle*180/M_PI);
+    qDebug("%f", segments[1].angle*180/M_PI);
+    qDebug("%f", segments[2].angle*180/M_PI);
+    qDebug("%f", segments[3].angle*180/M_PI);
+
     for(int i=0; i<4; i++)
     {
         if(qIsNaN(angle[i]))
@@ -202,10 +208,27 @@ bool RobotSimulation::calculatePosition(float X, float Y, float Z, float P, Serv
     segments[1].end.set(P2[0][3], P2[2][3], P2[1][3]);
     segments[2].end.set(P3[0][3], P3[2][3], P3[1][3]);
 
+
+    angles[0] = segments[0].angle*180/M_PI;
+    angles[1] = segments[1].angle*180/M_PI;
+    angles[2] = segments[2].angle*180/M_PI;
+    angles[3] = segments[3].angle*180/M_PI;
+
+    char servos[3];
+    for (int i = 0; i < sizeof(servos)/sizeof(*servos); i++) {
+        int tmp = 128 - (segments[i+1].angle*180/M_PI)*(255/SV0);
+        if(tmp > 255)
+            servos[i] = 255;
+        else if (tmp < 0)
+                servos[i] = 0;
+        else
+            servos[i] = tmp;
+    }
+
     pout->S6 = 128 - (segments[0].angle*180/M_PI)*(255/SV0);// first
-    pout->S5 = 128 - (segments[3].angle*180/M_PI)*(255/SV1); // second
+    pout->S5 = 128 - (segments[1].angle*180/M_PI - 90)*(255/SV1); // second
     pout->S4 = 128 - (segments[2].angle*180/M_PI)*(255/SV2); // third
-    pout->S3 = 128 + (segments[1].angle*180/M_PI)*(255/SV3); // fourth
+    pout->S3 = 128 - (segments[3].angle*180/M_PI)*(255/SV3); // fourth
     pout->S2 = 128;
     pout->S1 = 128;
 
