@@ -53,13 +53,7 @@ void RobotSimulation::draw(QGraphicsScene *scene)
 void RobotSimulation::setServoAngles(int angle)
 {
 
-    servoAngles = angle;
-    SV0 = angle;
-    SV1 = angle;
-    SV2 = angle;
-    SV3 = angle;
-    SV4 = angle;
-    SV5 = angle;
+    this->servoAngles = angle;
 }
 
 void RobotSimulation::draw_td(QGraphicsScene *scene)
@@ -118,12 +112,17 @@ bool RobotSimulation::calculatePosition(float X, float Y, float Z, float P, Serv
            A0[4][4] = {0}, A1[4][4] = {0}, A2[4][4] = {0}, A3[4][4] = {0},
            P0[4][4] = {0}, P1[4][4] = {0}, P2[4][4] = {0}, P3[4][4] = {0};
 
+    int SV0 = this->servoAngles;
+    int SV1 = this->servoAngles;
+    int SV2 = this->servoAngles;
+    int SV3 = this->servoAngles;
+    int SV4 = this->servoAngles;
+    int SV5 = this->servoAngles;
     angle[0] =  qAtan2(Y,X);
     X = qSqrt(X*X + Y*Y);
     // INVERSE KINEMATICS
     Xb = (X - L3 * qCos(P * M_PI / 180)) / (2 * L1);
     Zb = (Z - H - L3 * qSin(P * M_PI / 180)) / (2 * L1);
-    double Yb = (Y - L3 * qSin(P*M_PI / 180)) / (2*L1);
 
     Q = qSqrt((1 / (Xb * Xb + Zb * Zb)) - 1);
 
@@ -139,87 +138,6 @@ bool RobotSimulation::calculatePosition(float X, float Y, float Z, float P, Serv
     angle[1] = ((t1 + 90) * 2 * M_PI) / 360;  // back to radians
     angle[2] = ((t2 - 90) * 2 * M_PI) / 360;  // back to radians
     angle[3] = ((t3) * 2 * M_PI) / 360;  // back to radians
-
-    #define MAX_ALFA 146.3
-
-    /*
-    //kinematyka v2
-        double c;
-        double tmp_c;
-        double tmp_angle;
-        double tmp_val;
-        int rotated;
-        double dS5;
-        double dS4;
-        double dS3;
-        double zS5;
-        double zS4;
-        double zS3;
-        double P1_angle;
-        double P2_angle;
-double P3_angle;
-
-        c = qSqrt(X*X + Y*Y);
-                if (Y<0)
-                    rotated = -1;
-                else
-                    rotated = 1;
-
-                // S3, S4, S5
-                if (c<12){
-                    pout->S3 = 0;
-                    pout->S4 = 255;
-                    pout->S5 = round( 1.42 * MAX_ALFA );
-                } else if (c>36){
-                    pout->S3 = 128;
-                    pout->S4 = 128;
-                    pout->S5 = 0;
-                } else{
-                    tmp_c = round(c-12);
-                    pout->S3 = round(5.33333 * tmp_c);
-                    pout->S4 = 255-pout->S3;
-                    pout->S5 = round((1.42 * MAX_ALFA) - (((1.42 * MAX_ALFA)/24) * tmp_c));
-                }
-
-                // S6
-                if (X != 0){
-                    tmp_angle = qAtan2((double)Y*rotated, (double)X);
-                    //obrot dla uzyskania kierunku
-                    pout->S6 = round(255 - (tmp_angle * (255/M_PI)));
-                }else
-                    pout->S6 = 128;
-
-                // odwrocenie
-                if (Y<0){
-                    pout->S6 = 255 - pout->S6;
-                    pout->S5 = 255 - pout->S5;
-                    pout->S4 = 255 - pout->S4;
-                    pout->S3 = 255 - pout->S3;
-                }
-
-                // obliczanie wysokosci Z
-                zS5 = zS4 = zS3 = 0;
-                c = qSqrt(c*c + Z*Z);
-                dS5 = (128 - pout->S5)/36.0;
-                dS4 = (128 - pout->S4)/36.0;
-                dS3 = (128 - pout->S3)/36.0;
-                for (int i=0; i<Z; i++){
-                    zS5 += dS5;
-                    zS4 += dS4;
-                    zS3 += dS3;
-                }
-                pout->S5 = round(pout->S5+zS5);
-                pout->S4 = round(pout->S4+zS4);
-                pout->S3 = round(pout->S3+zS3);
-
-
-                // kinematyka prosta z moodla
-                angle[1] = ((pout->S5-128)*M_PI/256)+(M_PI/2);
-                angle[2] = -(pout->S4-128)*(M_PI/256);
-                angle[3] = (pout->S3-128)*(M_PI/256);
-                angle[0] = 0;
-                */
-
 
     // FORWARD KINEMATICS
     R0[0][0] = qCos(angle[0]);

@@ -38,13 +38,7 @@ public:
     void draw_td(QGraphicsScene *scene);
 private:
     Segment segments[SEGMENTS];
-    int servoAngles;
-    int SV0;
-    int SV1;
-    int SV2;
-    int SV3;
-    int SV4;
-    int SV5;
+    volatile int servoAngles;
 
 
 
