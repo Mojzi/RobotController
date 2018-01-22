@@ -86,6 +86,8 @@ private slots:
     void on_spinBox_p_valueChanged(double arg1);
 
     void calculateAndDrawRobot();
+    void on_horizontalSlider_valueChanged(int value);
+
 private:
     Ui::MainWindow *ui;
     void paintEvent(QPaintEvent *);

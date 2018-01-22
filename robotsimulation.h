@@ -33,10 +33,18 @@ class RobotSimulation
 public:
     RobotSimulation(QGraphicsScene *scene, Servo *pout);
     bool calculatePosition(float x, float y, float z, float p, Servo *pout, float angles[4]);
+    void setServoAngles(int angle);
     void draw(QGraphicsScene *scene);
     void draw_td(QGraphicsScene *scene);
 private:
     Segment segments[SEGMENTS];
+    int servoAngles;
+    int SV0;
+    int SV1;
+    int SV2;
+    int SV3;
+    int SV4;
+    int SV5;
 
 
 

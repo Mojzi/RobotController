@@ -10,18 +10,13 @@
 #define L2 8.1
 #define L1 8.0
 
-#define TESTA 125
+#define TESTA 140
 /* =========== ZAKRESY SERW ROBOTA W STOPNIACH ================== */
-#define SV0 (TESTA)     // servo 1 (rotating base)
-#define SV1 (TESTA)     // servo 2 (first joint)
-#define SV2 (TESTA)     // servo 3 (second joint)
-#define SV3 (TESTA)     // servo 4 (third joint)
-#define SV4 (TESTA)     // servo 5 (grabber rotation)
-#define SV5 (TESTA)     // servo 6 (opening of grabber)
 
 #define DRAW_SCALE 10
 RobotSimulation::RobotSimulation(QGraphicsScene *scene, Servo *pout)
 {
+    setServoAngles(160);
 }
 
 void RobotSimulation::draw(QGraphicsScene *scene)
@@ -54,6 +49,19 @@ void RobotSimulation::draw(QGraphicsScene *scene)
 
 
 }
+
+void RobotSimulation::setServoAngles(int angle)
+{
+
+    servoAngles = angle;
+    SV0 = angle;
+    SV1 = angle;
+    SV2 = angle;
+    SV3 = angle;
+    SV4 = angle;
+    SV5 = angle;
+}
+
 void RobotSimulation::draw_td(QGraphicsScene *scene)
 {
 

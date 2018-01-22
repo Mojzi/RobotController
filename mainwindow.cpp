@@ -423,3 +423,10 @@ void MainWindow::on_spinBox_p_valueChanged(double arg1)
 {
     calculateAndDrawRobot();
 }
+
+void MainWindow::on_horizontalSlider_valueChanged(int value)
+{
+    ui->label_13->setText(QString::number(value));
+    robotSimulation->setServoAngles(value);
+    calculateAndDrawRobot();
+}
