@@ -6,6 +6,7 @@
 #include <QGraphicsScene>
 #include <QMainWindow>
 #include "comminterface.h"
+#include <algorithm>
 
 #define SEGMENTS 3
 
